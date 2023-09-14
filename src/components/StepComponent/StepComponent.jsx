@@ -1,6 +1,6 @@
 import { Steps } from 'antd'
 import React from 'react'
-import { CustomStep } from './styled';
+import { CustomStep } from './style';
 const StepComponent = ({ current = 0, items = [] }) => {
     return (
         <Steps current={current}>
