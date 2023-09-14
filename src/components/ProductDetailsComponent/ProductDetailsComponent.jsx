@@ -102,7 +102,7 @@ const ProductDetailsComponent = ({ idProduct }) => {
 
     return (
         <Loading isLoading={isLoading}>
-            <Row style={{ padding: '16px', background: '#fff', borderRadius: '5px' }}>
+            <Row style={{ padding: '16px', background: '#fff', borderRadius: '5px', width: '100%' }}>
                 <Col span={10} style={{ borderRight: '1px solid #e5e5e5', paddingRight: '8px' }}>
                     <Image src={productDetails?.image} alt="image" preview={false} />
                     <Row style={{ padding: '10px', justifyContent: 'center' }}>
@@ -180,13 +180,17 @@ const ProductDetailsComponent = ({ idProduct }) => {
                         {errorLimitOrder && <div style={{ color: 'red' }}>Đã vượt quá số lượng trong kho</div>}
                     </div>
                 </Col>
-                <CommentComponent
-                    dataHref={process.env.REACT_APP_IS_LOCAL
-                        ? "https://developers.facebook.com/docs/plugins/comments#configurator"
-                        : window.location.href
-                    }
-                    width="1270"
-                />
+            </Row>
+            <Row style={{ padding: '16px', background: '#fff', borderRadius: '5px' }}>
+                <Col span={24} style={{ borderRight: '1px solid #e5e5e5', paddingRight: '8px' }}>
+                    <CommentComponent
+                        dataHref={process.env.REACT_APP_IS_LOCAL
+                            ? "https://developers.facebook.com/docs/plugins/comments#configurator"
+                            : window.location.href
+                        }
+                        width="1103"
+                    />
+                </Col>
             </Row>
         </Loading >
     );
