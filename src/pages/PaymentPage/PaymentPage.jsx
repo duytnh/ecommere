@@ -162,7 +162,7 @@ const PaymentPage = () => {
         } else if (isError) {
             message.error()
         }
-    }, [isSuccess, isError, dataAdd?.status, delivery, dispatch, navigate, order?.orderItemsSlected, payment, totalPriceMemo])
+    }, [isSuccess, isError])
 
     const handleCancleUpdate = () => {
         setStateUserDetails({
