@@ -21,7 +21,7 @@ function App() {
         const refreshToken = JSON.parse(storageRefreshToken);
         const res = await UserService.getDetailsUser(id, token);
         dispatch(
-          updateUser({ ...res?.data, access_token: token, refreshToken: refreshToken })
+          updateUser({ ...res?.data, access_token: token, refresh_token: refreshToken })
         );
       } catch (error) {
         console.error('Lỗi khi phân tích mã làm mới:', error);
