@@ -15,15 +15,20 @@ import { useQuery } from '@tanstack/react-query'
 import DrawerComponent from '../DrawerComponent/DrawerComponent'
 import { useSelector } from 'react-redux'
 import ModalComponent from '../ModalComponent/ModalComponent'
+import CKEditorComponent from '../CKEditorComponent/CKEditorComponent'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const AdminProduct = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('')
+    const [ckEditorContent, setCkEditorContent] = useState('');
+    const [contentDetails, setContentDetails] = useState('');
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
     const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false)
     const user = useSelector((state) => state?.user)
     const searchInput = useRef(null);
+    const editorRef = useRef(null);
     const inittial = () => ({
         name: '',
         price: '',
@@ -387,7 +392,7 @@ const AdminProduct = () => {
         const params = {
             name: stateProduct.name,
             price: stateProduct.price,
-            description: stateProduct.description,
+            description: ckEditorContent,
             rating: stateProduct.rating,
             image: stateProduct.image,
             type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
@@ -408,6 +413,30 @@ const AdminProduct = () => {
             [e.target.name]: e.target.value
         })
     }
+
+    const handleOnchangeCKeditor = (e, editor) => {
+        const newContent = editor.getData();
+        setCkEditorContent(newContent); // Cập nhật state với nội dung mới
+    }
+
+    const handleOnchangeCKeditorDetails = (e, editor) => {
+        const newContent = editor.getData();
+        setContentDetails(newContent)
+    };
+
+    useEffect(() => {
+        const editor = editorRef.current;
+        if (editor) {
+            editor.setData(stateProductDetails.description);
+        }
+    }, [stateProductDetails.description]);
+
+    useEffect(() => {
+        const editor = editorRef.current;
+        if (editor) {
+            editor.setData(stateProduct.description);
+        }
+    }, [stateProduct.description]);
 
     const handleOnchangeDetails = (e) => {
         setStateProductDetails({
@@ -438,7 +467,19 @@ const AdminProduct = () => {
         })
     }
     const onUpdateProduct = () => {
-        mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, ...stateProductDetails }, {
+        setStateProductDetails({
+            name: stateProductDetails.name,
+            price: stateProductDetails.price,
+            description: contentDetails,
+            rating: stateProductDetails.rating,
+            image: stateProductDetails.image,
+            type: stateProductDetails.type,
+            countInStock: stateProductDetails.countInStock,
+            discount: stateProductDetails.discount,
+            sold: stateProductDetails.sold
+        });
+        console.log('statePro', stateProductDetails)
+        mutationUpdate.mutate({ id: rowSelected, token: user?.access_token, stateProductDetails }, {
             onSettled: () => {
                 queryProduct.refetch()
             }
@@ -526,7 +567,12 @@ const AdminProduct = () => {
                             name="description"
                             rules={[{ required: true, message: 'Please input your count description!' }]}
                         >
-                            <InputComponent value={stateProduct.description} onChange={handleOnchange} name="description" />
+                            <CKEditorComponent
+                                editor={ClassicEditor}
+                                onReady={(editor) => {
+                                    editorRef.current = editor;
+                                }}
+                                onChange={handleOnchangeCKeditor} />
                         </Form.Item>
                         <Form.Item
                             label="Rating"
@@ -619,7 +665,15 @@ const AdminProduct = () => {
                             name="description"
                             rules={[{ required: true, message: 'Please input your count description!' }]}
                         >
-                            <InputComponent value={stateProductDetails.description} onChange={handleOnchangeDetails} name="description" />
+                            <CKEditorComponent
+                                editor={ClassicEditor}
+                                data={contentDetails}
+                                onReady={(editor) => {
+                                    editorRef.current = editor;
+                                    editor.setData(stateProductDetails.description);
+                                }}
+                                onChange={handleOnchangeCKeditorDetails}
+                            />
                         </Form.Item>
                         <Form.Item
                             label="Rating"
